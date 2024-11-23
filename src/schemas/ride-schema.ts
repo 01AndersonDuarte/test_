@@ -1,7 +1,7 @@
 import Joi from "joi";
-import { rideEstimate } from "../utils/types";
+import { rideEstimateInput } from "../utils/types";
 
-export const rideEstimateSchema = Joi.object<rideEstimate>({
+export const rideEstimateSchema = Joi.object<rideEstimateInput>({
   customer_id: Joi.string().required(),
   origin: Joi.string().required(),
   destination: Joi.string()

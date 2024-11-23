@@ -3,7 +3,7 @@ export type ApplicationError = {
   error_description: string;
 };
 
-export type rideEstimate = {
+export type rideEstimateInput = {
   customer_id: string;
   origin: string;
   destination: string;
