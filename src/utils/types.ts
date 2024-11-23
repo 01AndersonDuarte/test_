@@ -1,4 +1,10 @@
 export type ApplicationError = {
-  name: string;
-  message: string;
+  error_code: string;
+  error_description: string;
+};
+
+export type rideEstimate = {
+  customer_id: string;
+  origin: string;
+  destination: string;
 };

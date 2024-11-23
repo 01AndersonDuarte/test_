@@ -3,13 +3,19 @@ import httpStatus from "http-status";
 import { ApplicationError } from "../utils/types";
 
 export function handleApplicationErrors(
-  error: ApplicationError | Error,
+  error: ApplicationError,
   _req: Request,
   res: Response,
   _next: NextFunction
 ) {
+  if (error.error_code === "INVALID_DATA") {
+    res.status(httpStatus.BAD_REQUEST).send(error);
+
+    return;
+  }
+
   res.status(httpStatus.INTERNAL_SERVER_ERROR).send({
-    error: "InternalServerError",
-    message: "Internal Server Error",
+    error_code: "InternalServerError",
+    error_description: "Internal Server Error",
   });
 }
