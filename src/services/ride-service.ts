@@ -1,6 +1,7 @@
 import {
   addressToEstimateRoute,
   driver,
+  rideConfirmInput,
   rideEstimateInput,
   rideEstimateResult,
 } from "../utils/types";
@@ -102,4 +103,10 @@ export async function rideEstimate(
   };
 
   return result;
+}
+
+export async function rideConfirm(
+  rideConfirmData: rideConfirmInput
+): Promise<void> {
+  return;
 }

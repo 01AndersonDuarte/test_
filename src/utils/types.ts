@@ -43,3 +43,16 @@ export type rideEstimateResult = {
   options: driver[] | [];
   routeResponse: Array<any>;
 };
+
+export type rideConfirmInput = {
+  customer_id: string;
+  origin: string;
+  destination: string;
+  distance: number;
+  duration: string;
+  driver: {
+    id: number;
+    name: string;
+  };
+  value: number;
+};
