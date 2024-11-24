@@ -8,3 +8,12 @@ export type rideEstimateInput = {
   origin: string;
   destination: string;
 };
+
+export type addressToEstimateRoute = {
+  origin: {
+    address: string;
+  };
+  destination: {
+    address: string;
+  };
+};

@@ -1,9 +1,12 @@
 import "express-async-errors";
 import express, { Request, Response } from "express";
 import cors from "cors";
+import dotenv from "dotenv";
 
 import { handleApplicationErrors } from "./middlewares/error-handling-middleware";
 import { rideRouter } from "./routes";
+
+dotenv.config();
 
 const server = express();
 server
