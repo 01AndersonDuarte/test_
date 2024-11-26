@@ -9,9 +9,9 @@ async function connectToDatabase() {
   try {
     await client.connect();
     dbInstance = client.db();
-    console.log(`Conectado ao MongoDB! Banco: ${dbInstance.databaseName}`);
+    console.log(`Connected to MongoDB! Database: ${dbInstance.databaseName}`);
   } catch (error) {
-    console.error("Erro ao conectar ao MongoDB:", error);
+    console.error("Error connecting to MongoDB:", error);
     process.exit(1);
   }
 }
@@ -20,7 +20,7 @@ connectToDatabase();
 
 export const db = (): Db => {
   if (!dbInstance) {
-    throw new Error("Banco de dados não inicializado. Verifique a conexão.");
+    throw new Error("Database uninitialized. Check the connection.");
   }
 
   return dbInstance;
