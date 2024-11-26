@@ -8,6 +8,7 @@ import {
 } from "../utils/types";
 import { computeRoutes } from "../api";
 import * as errors from "../errors";
+import * as rideRepository from "../repositories";
 
 const drivers = [
   {
@@ -132,5 +133,6 @@ export async function rideConfirm(
   const isAValidRide = validateRide(driver, distance);
 
   if (isAValidRide) {
+    return await rideRepository.insertRide(rideConfirmData);
   }
 }
