@@ -5,10 +5,14 @@ import {
   rideConfirmInput,
   rideEstimateInput,
   rideEstimateResult,
+  rideResponse,
+  ridesConfirmedResponse,
 } from "../utils/types";
 import { computeRoutes } from "../api";
 import * as errors from "../errors";
 import * as rideRepository from "../repositories";
+import { ridesConfirmedFilters } from "../utils/types";
+import { date } from "joi";
 
 const drivers = [
   {
@@ -135,4 +139,35 @@ export async function rideConfirm(
   if (isAValidRide) {
     return await rideRepository.insertRide(rideConfirmData);
   }
+}
+
+export async function getRidesConfirmed(
+  filters: ridesConfirmedFilters
+): Promise<ridesConfirmedResponse> {
+  if (filters.driverId && filters.driverId >= 0) {
+    const isAValidDriver = drivers.some((driver) => driver.id === driver.id);
+
+    if (!isAValidDriver) throw errors.invalidDriver("Invalid driver");
+  }
+
+  const rides = await rideRepository.getRides(filters);
+
+  if (rides.length === 0) {
+    throw errors.noRidesFound("No trips were found");
+  }
+
+  const ridesConfirmed: ridesConfirmedResponse = {
+    customer_id: filters.customerId,
+    rides: rides.map((ride) => ({
+      id: ride._id,
+      date: ride.date,
+      origin: ride.origin,
+      destination: ride.destination,
+      distance: ride.distance,
+      duration: ride.duration,
+      value: ride.value,
+    })),
+  };
+
+  return ridesConfirmed;
 }
