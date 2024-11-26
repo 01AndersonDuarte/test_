@@ -1,10 +1,14 @@
 import {
   addressToEstimateRoute,
   driver,
+  driverInput,
+  rideConfirmInput,
   rideEstimateInput,
   rideEstimateResult,
 } from "../utils/types";
 import { computeRoutes } from "../api";
+import * as errors from "../errors";
+import * as rideRepository from "../repositories";
 
 const drivers = [
   {
@@ -102,4 +106,33 @@ export async function rideEstimate(
   };
 
   return result;
+}
+
+function validateRide(driver: driverInput, distance: number): boolean | void {
+  const driverData = drivers.find((driver) => driver.id === driver.id);
+
+  if (driverData) {
+    const isAValidMileage = distance >= driverData?.minKm;
+
+    if (isAValidMileage) {
+      return true;
+    } else {
+      throw errors.invalidDistance(
+        `The distance provided is not valid for the driver ${driver.name}`
+      );
+    }
+  }
+
+  throw errors.driverNotFound("The driver id provided is invalid");
+}
+
+export async function rideConfirm(
+  rideConfirmData: rideConfirmInput
+): Promise<void> {
+  const { driver, distance } = rideConfirmData;
+  const isAValidRide = validateRide(driver, distance);
+
+  if (isAValidRide) {
+    return await rideRepository.insertRide(rideConfirmData);
+  }
 }

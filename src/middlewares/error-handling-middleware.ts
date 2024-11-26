@@ -14,6 +14,18 @@ export function handleApplicationErrors(
     return;
   }
 
+  if (error.error_code === "DRIVER_NOT_FOUND") {
+    res.status(httpStatus.NOT_FOUND).send(error);
+
+    return;
+  }
+
+  if (error.error_code === "INVALID_DISTANCE") {
+    res.status(httpStatus.NOT_ACCEPTABLE).send(error);
+
+    return;
+  }
+
   res.status(httpStatus.INTERNAL_SERVER_ERROR).send({
     error_code: "InternalServerError",
     error_description: "Internal Server Error",

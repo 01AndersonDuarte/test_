@@ -1,5 +1,5 @@
 import Joi from "joi";
-import { rideEstimateInput } from "../utils/types";
+import { rideConfirmInput, rideEstimateInput } from "../utils/types";
 
 export const rideEstimateSchema = Joi.object<rideEstimateInput>({
   customer_id: Joi.string().required(),
@@ -16,3 +16,14 @@ export const rideEstimateSchema = Joi.object<rideEstimateInput>({
       "any.invalid": `The "destination" cannot be the same as the "origin"`,
     }),
 });
+
+export const rideConfirmSchema = rideEstimateSchema.concat(
+  Joi.object({
+    distance: Joi.number().integer().required(),
+    driver: Joi.object({
+      id: Joi.number().required(),
+      name: Joi.string().required(),
+    }).required(),
+    value: Joi.number().required(),
+  })
+);
