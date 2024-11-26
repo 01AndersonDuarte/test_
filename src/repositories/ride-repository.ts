@@ -21,7 +21,7 @@ type RideFilters = {
 };
 
 async function getRidesCollection(): Promise<Collection<RideDocument>> {
-  const dbInstance = db();
+  const dbInstance = await db();
 
   return dbInstance.collection("ride");
 }

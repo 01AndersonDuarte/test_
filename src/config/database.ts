@@ -16,9 +16,9 @@ async function connectToDatabase() {
   }
 }
 
-connectToDatabase();
+export const db = async (): Promise<Db> => {
+  await connectToDatabase();
 
-export const db = (): Db => {
   if (!dbInstance) {
     throw new Error("Database uninitialized. Check the connection.");
   }
