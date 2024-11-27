@@ -27,7 +27,7 @@ export default function Home() {
   };
 
   return (
-    <div style={{ minHeight: "100vh", backgroundColor: "#FAFAFA" }}>
+    <div style={{ marginTop: "35px" }}>
       <Header pageName={getPageName()} />
 
       <div
@@ -38,7 +38,13 @@ export default function Home() {
           flexDirection: "column",
         }}
       >
-        <div style={{ flex: 1, padding: "16px" }}>
+        <div
+          style={{
+            flex: 1,
+            display: "flex",
+            justifyContent: "center",
+          }}
+        >
           <Outlet />
         </div>
 
