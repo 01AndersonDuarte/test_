@@ -45,7 +45,7 @@ const drivers = [
 
 import { db } from "./database";
 
-const seedData = async () => {
+export const seedData = async () => {
   try {
     const database = await db();
     const driversCollection = database.collection("drivers");
@@ -59,5 +59,3 @@ const seedData = async () => {
     console.error("Erro ao popular a coleção:", error);
   }
 };
-
-seedData();

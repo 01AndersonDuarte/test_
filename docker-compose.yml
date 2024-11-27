@@ -1,0 +1,32 @@
+services:
+  mongodb:
+    image: mongo
+    container_name: mongodb
+    restart: always
+    ports:
+      - 27018:27017
+    networks:
+      - shopper-network
+    volumes:
+      - shopper-volume:/data/db
+
+  shopper:
+    build: .
+    container_name: shopper_backend
+    ports:
+      - 8080:8080
+    environment:
+      - DATABASE_URL=mongodb://mongodb:27017/shopper
+      - GOOGLE_API_KEY=AIzaSyCT5SZBjiF9Q2T2EPQWhSCMvIXfoJNvP5I
+    networks:
+      - shopper-network
+    depends_on:
+      - mongodb
+
+networks:
+  shopper-network:
+    name: shopper-network
+
+volumes:
+  shopper-volume:
+    name: shopper-volume

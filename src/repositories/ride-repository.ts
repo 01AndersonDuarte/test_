@@ -59,7 +59,7 @@ export async function getDriverById(
   driverId: number
 ): Promise<DriverDocument | null> {
   const driversCollection = await getDriversCollection();
-  const key = { driver_id: driverId };
+  const key = { id: driverId };
 
   return driversCollection.findOne(key);
 }
