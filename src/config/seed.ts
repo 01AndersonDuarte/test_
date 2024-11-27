@@ -42,6 +42,7 @@ const drivers = [
     minKm: 10,
   },
 ];
+
 import { db } from "./database";
 
 const seedData = async () => {
