@@ -5,57 +5,15 @@ import {
   rideConfirmInput,
   rideEstimateInput,
   rideEstimateResult,
+  ridesConfirmedResponse,
 } from "../utils/types";
 import { computeRoutes } from "../api";
 import * as errors from "../errors";
 import * as rideRepository from "../repositories";
+import { ridesConfirmedFilters } from "../utils/types";
 
-const drivers = [
-  {
-    id: 1,
-    name: "Homer Simpson",
-    description:
-      "Olá! Sou o Homer, seu motorista camarada! Relaxe e aproveite o passeio, com direito a rosquinhas e boas risadas (e talvez alguns desvios).",
-    vehicle: "Plymouth Valiant 1973 rosa e enferrujado",
-    review: {
-      rating: 2 / 5,
-      comment:
-        "Motorista simpático, mas errou o caminho 3 vezes. O carro cheira a donuts.",
-    },
-    rate: 250,
-    minKm: 1,
-  },
-  {
-    id: 2,
-    name: "Dominic Toretto",
-    description:
-      "Ei, aqui é o Dom. Pode entrar, vou te levar com segurança e rapidez ao seu destino. Só não mexa no rádio, a playlist é sagrada.",
-    vehicle: "Dodge Charger R/T 1970 modificado",
-    review: {
-      rating: 4 / 5,
-      comment:
-        "Que viagem incrível! O carro é um show à parte e o motorista, apesar de ter uma cara de poucos amigos, foi super gente boa. Recomendo!",
-    },
-    rate: 5000,
-    minKm: 5,
-  },
-  {
-    id: 3,
-    name: "James Bond",
-    description:
-      "Boa noite, sou James Bond. À seu dispor para um passeio suave e discreto. Aperte o cinto e aproveite a viagem.",
-    vehicle: "Aston Martin DB5 clássico",
-    review: {
-      rating: 5 / 5,
-      comment:
-        "Serviço impecável! O motorista é a própria definição de classe e o carro é simplesmente magnífico. Uma experiência digna de um agente secreto.",
-    },
-    rate: 10000,
-    minKm: 10,
-  },
-];
-
-function getDrivers(distanceMeters: number): driver[] {
+async function getDrivers(distanceMeters: number): Promise<driver[]> {
+  const drivers = await rideRepository.getDrivers();
   const oneKmToMeters = 1000;
   const distanceInKm = distanceMeters / oneKmToMeters;
 
@@ -94,7 +52,7 @@ export async function rideEstimate(
 
   const { response, cleanRoute } = await computeRoutes(requestRideEstimate);
 
-  const driversOptions: driver[] = getDrivers(cleanRoute.distanceMeters);
+  const driversOptions = await getDrivers(cleanRoute.distanceMeters);
 
   const result: rideEstimateResult = {
     origin: cleanRoute.startLocation,
@@ -108,8 +66,11 @@ export async function rideEstimate(
   return result;
 }
 
-function validateRide(driver: driverInput, distance: number): boolean | void {
-  const driverData = drivers.find((driver) => driver.id === driver.id);
+async function validateRide(
+  driver: driverInput,
+  distance: number
+): Promise<boolean | void> {
+  const driverData = await rideRepository.getDriverById(driver.id);
 
   if (driverData) {
     const isAValidMileage = distance >= driverData?.minKm;
@@ -130,9 +91,44 @@ export async function rideConfirm(
   rideConfirmData: rideConfirmInput
 ): Promise<void> {
   const { driver, distance } = rideConfirmData;
-  const isAValidRide = validateRide(driver, distance);
+  const isAValidRide = await validateRide(driver, distance);
 
   if (isAValidRide) {
     return await rideRepository.insertRide(rideConfirmData);
   }
+}
+
+export async function getRidesConfirmed(
+  filters: ridesConfirmedFilters
+): Promise<ridesConfirmedResponse> {
+  if (filters.driverId && filters.driverId >= 0) {
+    const isAValidDriver = await rideRepository.getDriverById(filters.driverId);
+
+    if (!isAValidDriver) throw errors.invalidDriver("Invalid driver");
+  }
+
+  const rides = await rideRepository.getRides(filters);
+
+  if (rides.length === 0) {
+    throw errors.noRidesFound("No trips were found");
+  }
+
+  const ridesConfirmed: ridesConfirmedResponse = {
+    customer_id: filters.customerId,
+    rides: rides.map((ride) => ({
+      id: ride._id,
+      date: ride.date,
+      origin: ride.origin,
+      destination: ride.destination,
+      distance: ride.distance,
+      duration: ride.duration,
+      driver: {
+        id: ride.driver.id,
+        name: ride.driver.name,
+      },
+      value: ride.value,
+    })),
+  };
+
+  return ridesConfirmed;
 }

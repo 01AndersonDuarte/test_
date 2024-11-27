@@ -58,3 +58,24 @@ export type rideConfirmInput = {
   driver: driverInput;
   value: number;
 };
+
+export type ridesConfirmedFilters = {
+  customerId: string;
+  driverId?: number;
+};
+
+export type rideResponse = {
+  id: number;
+  date: Date;
+  origin: string;
+  destination: string;
+  distance: number;
+  duration: string;
+  driver: driverInput;
+  value: string;
+};
+
+export type ridesConfirmedResponse = {
+  customer_id: string;
+  rides: rideResponse[];
+};

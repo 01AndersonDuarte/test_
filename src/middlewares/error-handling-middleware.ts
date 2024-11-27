@@ -8,13 +8,19 @@ export function handleApplicationErrors(
   res: Response,
   _next: NextFunction
 ) {
-  if (error.error_code === "INVALID_DATA") {
+  if (
+    error.error_code === "INVALID_DATA" ||
+    error.error_code === "INVALID_DRIVER"
+  ) {
     res.status(httpStatus.BAD_REQUEST).send(error);
 
     return;
   }
 
-  if (error.error_code === "DRIVER_NOT_FOUND") {
+  if (
+    error.error_code === "DRIVER_NOT_FOUND" ||
+    error.error_code === "NO_RIDES_FOUND"
+  ) {
     res.status(httpStatus.NOT_FOUND).send(error);
 
     return;
