@@ -54,6 +54,19 @@ export async function getRides(filters: ridesConfirmedFilters) {
   }
 
   pipeline.push({ $match: key });
+  pipeline.push(
+    {
+      $lookup: {
+        from: "drivers",
+        localField: "driver_id",
+        foreignField: "id",
+        as: "driver",
+      },
+    },
+    {
+      $unwind: "$driver",
+    }
+  );
   pipeline.push({
     $project: {
       _id: 1,
@@ -63,6 +76,10 @@ export async function getRides(filters: ridesConfirmedFilters) {
       distance: 1,
       duration: 1,
       value: 1,
+      driver: {
+        id: "$driver.id",
+        name: "$driver.name",
+      },
     },
   });
   pipeline.push({ $sort: { date: -1 } });

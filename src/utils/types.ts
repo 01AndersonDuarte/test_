@@ -71,7 +71,7 @@ export type rideResponse = {
   destination: string;
   distance: number;
   duration: string;
-  driver?: driverInput;
+  driver: driverInput;
   value: string;
 };
 

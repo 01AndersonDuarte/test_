@@ -5,14 +5,12 @@ import {
   rideConfirmInput,
   rideEstimateInput,
   rideEstimateResult,
-  rideResponse,
   ridesConfirmedResponse,
 } from "../utils/types";
 import { computeRoutes } from "../api";
 import * as errors from "../errors";
 import * as rideRepository from "../repositories";
 import { ridesConfirmedFilters } from "../utils/types";
-import { date } from "joi";
 
 const drivers = [
   {
@@ -165,6 +163,10 @@ export async function getRidesConfirmed(
       destination: ride.destination,
       distance: ride.distance,
       duration: ride.duration,
+      driver: {
+        id: ride.driver.id,
+        name: ride.driver.name,
+      },
       value: ride.value,
     })),
   };

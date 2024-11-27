@@ -49,6 +49,8 @@ const seedData = async () => {
     const database = await db();
     const driversCollection = database.collection("drivers");
 
+    await driversCollection.deleteMany({});
+
     const result = await driversCollection.insertMany(drivers);
 
     console.log(`Inseridos ${result.insertedCount} documentos!`);
