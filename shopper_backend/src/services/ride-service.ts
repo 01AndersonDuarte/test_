@@ -10,10 +10,11 @@ import {
 import { computeRoutes } from "../api";
 import * as errors from "../errors";
 import * as rideRepository from "../repositories";
+import * as driversServices from "../services";
 import { ridesConfirmedFilters } from "../utils/types";
 
 async function getDrivers(distanceMeters: number): Promise<driver[]> {
-  const drivers = await rideRepository.getDrivers();
+  const drivers = await driversServices.getDrivers();
   const oneKmToMeters = 1000;
   const distanceInKm = distanceMeters / oneKmToMeters;
 
@@ -70,7 +71,7 @@ async function validateRide(
   driver: driverInput,
   distance: number
 ): Promise<boolean | void> {
-  const driverData = await rideRepository.getDriverById(driver.id);
+  const driverData = await driversServices.getDriverById(driver.id);
 
   if (driverData) {
     const isAValidMileage = distance >= driverData?.minKm;
@@ -102,7 +103,9 @@ export async function getRidesConfirmed(
   filters: ridesConfirmedFilters
 ): Promise<ridesConfirmedResponse> {
   if (filters.driverId && filters.driverId >= 0) {
-    const isAValidDriver = await rideRepository.getDriverById(filters.driverId);
+    const isAValidDriver = await driversServices.getDriverById(
+      filters.driverId
+    );
 
     if (!isAValidDriver) throw errors.invalidDriver("Invalid driver");
   }

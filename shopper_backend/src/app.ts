@@ -4,7 +4,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 
 import { handleApplicationErrors } from "./middlewares/error-handling-middleware";
-import { rideRouter } from "./routes";
+import { driversRouter, rideRouter } from "./routes";
 
 dotenv.config();
 
@@ -16,6 +16,7 @@ server
     res.send({ message: "I'm fine!" });
   })
   .use("/ride", rideRouter)
+  .use("/drivers", driversRouter)
   .use(handleApplicationErrors);
 
 export default server;
