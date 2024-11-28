@@ -19,7 +19,8 @@ services:
       - 8080:8080
     environment:
       - DATABASE_URL=mongodb://mongodb:27017/shopper
-      - GOOGLE_API_KEY=AIzaSyCT5SZBjiF9Q2T2EPQWhSCMvIXfoJNvP5I
+    env_file:
+      - .env
     networks:
       - shopper-network
     depends_on:
@@ -29,14 +30,15 @@ services:
     build: ./shopper_frontend
     container_name: react_frontend
     ports:
-      - 80:3000
+      - 80:80
     networks:
       - shopper-network
     depends_on:
       - shopper
     environment:
       - VITE_SHOPPER_API=http://shopper_backend:8080/
-      - VITE_GOOGLE_API_KEY=AIzaSyCT5SZBjiF9Q2T2EPQWhSCMvIXfoJNvP5I
+    env_file:
+      - .env
 
 networks:
   shopper-network:
