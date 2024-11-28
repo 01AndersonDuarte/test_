@@ -3,7 +3,6 @@ import {
   GoogleMap,
   LoadScript,
   DirectionsRenderer,
-  /** @ts-expect-error  disable */
 } from "@react-google-maps/api";
 
 interface MapWithRouteProps {
