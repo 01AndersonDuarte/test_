@@ -1,0 +1,47 @@
+version: "3.8"
+
+services:
+  mongodb:
+    image: mongo
+    container_name: mongodb
+    restart: always
+    ports:
+      - 27018:27017
+    networks:
+      - shopper-network
+    volumes:
+      - shopper-volume:/data/db
+
+  shopper:
+    build: ./shopper_backend
+    container_name: shopper_backend
+    ports:
+      - 8080:8080
+    environment:
+      - DATABASE_URL=mongodb://mongodb:27017/shopper
+      - GOOGLE_API_KEY=AIzaSyCT5SZBjiF9Q2T2EPQWhSCMvIXfoJNvP5I
+    networks:
+      - shopper-network
+    depends_on:
+      - mongodb
+
+  frontend:
+    build: ./shopper_frontend
+    container_name: react_frontend
+    ports:
+      - 80:3000
+    networks:
+      - shopper-network
+    depends_on:
+      - shopper
+    environment:
+      - VITE_SHOPPER_API=http://shopper_backend:8080/
+      - VITE_GOOGLE_API_KEY=AIzaSyCT5SZBjiF9Q2T2EPQWhSCMvIXfoJNvP5I
+
+networks:
+  shopper-network:
+    name: shopper-network
+
+volumes:
+  shopper-volume:
+    name: shopper-volume
