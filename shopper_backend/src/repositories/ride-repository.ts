@@ -1,11 +1,7 @@
 import { Collection } from "mongodb";
 import { UUIDTypes, v4 as uuidv4 } from "uuid";
 import { db } from "../config/database";
-import {
-  driver,
-  rideConfirmInput,
-  ridesConfirmedFilters,
-} from "../utils/types";
+import { rideConfirmInput, ridesConfirmedFilters } from "../utils/types";
 
 type RideDocument = {
   _id: UUIDTypes;
@@ -24,44 +20,10 @@ type RideFilters = {
   driver_id?: number;
 };
 
-type DriverDocument = {
-  id: number;
-  name: string;
-  description: string;
-  vehicle: string;
-  review: {
-    rating: number;
-    comment: string;
-  };
-  rate: number;
-  minKm: number;
-};
-
 async function getRidesCollection(): Promise<Collection<RideDocument>> {
   const dbInstance = await db();
 
   return dbInstance.collection("ride");
-}
-
-async function getDriversCollection(): Promise<Collection<DriverDocument>> {
-  const dbInstance = await db();
-
-  return dbInstance.collection("drivers");
-}
-
-export async function getDrivers(): Promise<DriverDocument[]> {
-  const driversCollection = await getDriversCollection();
-
-  return await driversCollection.find().toArray();
-}
-
-export async function getDriverById(
-  driverId: number
-): Promise<DriverDocument | null> {
-  const driversCollection = await getDriversCollection();
-  const key = { id: driverId };
-
-  return driversCollection.findOne(key);
 }
 
 export async function insertRide(rideConfirm: rideConfirmInput) {
