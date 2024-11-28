@@ -28,3 +28,8 @@ export type RideConfirmType = {
   };
   value: number;
 };
+
+export type Filters = {
+  customer_id: string;
+  driver_id?: number;
+};

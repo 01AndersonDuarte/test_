@@ -1,6 +1,6 @@
 import useAsync from "../useAsync";
 import * as ridesApi from "../../services/ridesApi";
-import { RideConfirmType, RideEstimateBody } from "../../utils/types";
+import { Filters, RideConfirmType, RideEstimateBody } from "../../utils/types";
 
 export function useRideEstimate() {
   const {
@@ -38,5 +38,24 @@ export function useRideConfirm() {
     rideConfirmLoading,
     rideConfirmError,
     confirmRide,
+  };
+}
+
+export function getRidesConfirmed() {
+  const {
+    data: ridesConfirmedData,
+    loading: ridesConfirmedLoading,
+    error: ridesConfirmedError,
+    act: getRidesConfirmed,
+  } = useAsync(
+    (filters: Filters) => ridesApi.getRidesConfirmed(filters),
+    false
+  );
+
+  return {
+    ridesConfirmedData,
+    ridesConfirmedLoading,
+    ridesConfirmedError,
+    getRidesConfirmed,
   };
 }
