@@ -20,7 +20,7 @@ services:
     environment:
       - DATABASE_URL=mongodb://mongodb:27017/shopper
     env_file:
-      - ./shopper_backend/.env
+      - .env
     networks:
       - shopper-network
     depends_on:
@@ -36,8 +36,9 @@ services:
     depends_on:
       - shopper
     env_file:
-      - ./shopper_frontend/.env
+      - .env
     environment:
+      - VITE_GOOGLE_API_KEY=${GOOGLE_API_KEY}
       - VITE_SHOPPER_API=http://shopper_backend:8080/
 
 networks:
