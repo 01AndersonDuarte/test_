@@ -6,54 +6,66 @@ import {
   Button,
   InputLabel,
   FormControl,
+  CircularProgress,
+  Typography,
 } from "@mui/material";
 import { useDrivers } from "../../hooks/api/useDrivers";
+import { useEffect, useState } from "react";
+import { useRidesConfirmed } from "../../hooks/api/useRides";
+import { Filters } from "../../utils/types";
+import RideCard from "../../components/History/RideCard";
 
 export default function History() {
   const { driversData, driversLoading } = useDrivers();
-  const filtros = {
+  const {
+    ridesConfirmedData,
+    ridesConfirmedLoading,
+    ridesConfirmedError,
+    getRidesConfirmed,
+  } = useRidesConfirmed();
+  const [filters, setFilters] = useState<Filters>({
     customer_id: "",
     driver_id: "all",
+  });
+
+  useEffect(() => {
+    const formRide = localStorage.getItem("form_ride");
+
+    if (formRide) {
+      const parsedFormRide = JSON.parse(formRide);
+      filters.customer_id = parsedFormRide.customer_id;
+
+      handleApplyFilter();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  /** @ts-expect-error  disable */
+  const handleChange = (field: string) => (event) => {
+    const { value } = event.target;
+    setFilters((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
   };
 
-  const handleApplyFilter = () => {
-    console.log("Filtros aplicados:", filtros);
+  const handleApplyFilter = async () => {
+    await getRidesConfirmed(filters);
+    console.log("RIDES: ", ridesConfirmedData);
   };
 
   return (
     <>
       {driversLoading ? (
-        "Loading..."
+        <CircularProgress size={24} color="inherit" />
       ) : (
         <Box
           sx={{
-            display: "flex",
-            flexDirection: "column",
-            maxWidth: 600,
             margin: "auto",
-            padding: 3,
             gap: 2,
           }}
         >
           <h2>Histórico de Viagens</h2>
-
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "flex-start",
-              gap: 2,
-            }}
-          >
-            <TextField
-              label="ID do Usuário"
-              variant="outlined"
-              name="customer_id"
-              value={filtros.customer_id}
-              onChange={(event) => (filtros.customer_id = event.target.value)}
-              fullWidth
-            />
-          </Box>
 
           <Box
             sx={{
@@ -64,11 +76,20 @@ export default function History() {
               width: "100%",
             }}
           >
+            <TextField
+              label="ID do Usuário"
+              variant="outlined"
+              disabled={ridesConfirmedLoading}
+              value={filters.customer_id}
+              onChange={handleChange("customer_id")}
+              fullWidth
+            />
             <FormControl fullWidth>
               <InputLabel id="driver-select-label">Motorista</InputLabel>
               <Select
-                value={filtros.driver_id}
-                onChange={(event) => (filtros.driver_id = event.target.value)}
+                value={filters.driver_id}
+                onChange={handleChange("driver_id")}
+                disabled={ridesConfirmedLoading}
                 label="Motorista"
               >
                 <MenuItem value="all">Todos</MenuItem>
@@ -80,18 +101,33 @@ export default function History() {
                 ))}
               </Select>
             </FormControl>
-
             <Button
               variant="contained"
               color="primary"
               onClick={handleApplyFilter}
-              sx={{
-                height: "100%",
-              }}
             >
-              Aplicar Filtro
+              {ridesConfirmedLoading ? (
+                <CircularProgress size={24} color="inherit" />
+              ) : (
+                "Aplicar Filtro"
+              )}
             </Button>
           </Box>
+
+          {/* @ts-expect-error disable */}
+          {ridesConfirmedError?.response?.data?.error_code ===
+          "NO_RIDES_FOUND" ? (
+            <Typography color="error" sx={{ mt: 1 }}>
+              Nenhuma viagem encontrada.
+            </Typography>
+          ) : ridesConfirmedData ? (
+            /* @ts-expect-error disable */
+            ridesConfirmedData.data?.rides?.map((ride) => (
+              <RideCard key={ride.id} ride={ride} />
+            ))
+          ) : (
+            <></>
+          )}
         </Box>
       )}
     </>

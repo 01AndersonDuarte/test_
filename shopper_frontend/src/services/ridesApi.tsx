@@ -14,18 +14,15 @@ export async function confirmRide(confirmRideBody: RideConfirmType) {
 }
 
 export async function getRidesConfirmed(filters: Filters) {
-  if (filters.driver_id) {
+  if (typeof filters.driver_id !== "string") {
     const queryParams = {
       driver_id: filters.driver_id,
     };
-    const response = await api.get(`ride/${filters.customer_id}`, {
+
+    return await api.get(`ride/${filters.customer_id}`, {
       params: queryParams,
     });
-
-    return response;
   }
 
-  const response = await api.get(`ride/${filters.customer_id}`);
-
-  return response;
+  return await api.get(`ride/${filters.customer_id}`);
 }
