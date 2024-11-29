@@ -41,7 +41,7 @@ export function useRideConfirm() {
   };
 }
 
-export function getRidesConfirmed() {
+export function useRidesConfirmed() {
   const {
     data: ridesConfirmedData,
     loading: ridesConfirmedLoading,

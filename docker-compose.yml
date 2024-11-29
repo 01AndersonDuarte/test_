@@ -35,10 +35,11 @@ services:
       - shopper-network
     depends_on:
       - shopper
-    environment:
-      - VITE_SHOPPER_API=http://shopper_backend:8080/
     env_file:
       - .env
+    environment:
+      - VITE_GOOGLE_API_KEY=${GOOGLE_API_KEY}
+      - VITE_SHOPPER_API=http://shopper_backend:8080/
 
 networks:
   shopper-network:

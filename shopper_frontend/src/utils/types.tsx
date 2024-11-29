@@ -31,5 +31,5 @@ export type RideConfirmType = {
 
 export type Filters = {
   customer_id: string;
-  driver_id?: number;
+  driver_id: number | string;
 };
